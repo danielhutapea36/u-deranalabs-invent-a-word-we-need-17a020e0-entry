@@ -33,6 +33,19 @@ def main() -> int:
     path = os.path.join(out_dir, "entry.txt")
     with open(path, "w", encoding="utf-8", newline="") as f:
         f.write(ENTRY)
+    # Read back what was written and verify it is exactly the entry:
+    # a silent truncation or encoding slip must fail loudly, not ship.
+    with open(path, "r", encoding="utf-8", newline="") as f:
+        written = f.read()
+    if written != ENTRY:
+        print("entry.txt does not match the entry after writing", file=sys.stderr)
+        return 1
+    if not (MIN_CHARS <= len(written) <= MAX_CHARS):
+        print(
+            f"entry.txt is {len(written)} characters, outside the 1-140 gate",
+            file=sys.stderr,
+        )
+        return 1
     return 0
 
 
